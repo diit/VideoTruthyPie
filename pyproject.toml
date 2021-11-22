@@ -8,7 +8,7 @@ authors = ["Dale Inverarity <dale@diit.ca>"]
 main = "videotruthypie.main:start"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
+python = ">=3.8,<3.11"
 opencv-python = "^4.5.4"
 
 [tool.poetry.dev-dependencies]
