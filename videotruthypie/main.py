@@ -11,7 +11,10 @@ def play_video(file):
     print("Playing:", file)
 
     # Setup our data
-    videoData = np.zeros((0,), dtype=int)
+    videoData = np.zeros((0,), dtype=str)
+
+    # Temp hack, set file name for first row
+    videoData = np.append(videoData, [file])
 
     # load video capture from file
     video = cv2.VideoCapture(file)
