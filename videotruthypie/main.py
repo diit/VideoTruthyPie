@@ -7,6 +7,9 @@ import os
 # Because mac is doggy doo doo
 NAUTY_WORDS = ['.DS_Store']
 
+# How many frames to skip, 2 = every other, 3 = every third etc.
+PROCESS_EVERY_N_FRAME = 2
+
 def play_video(file):
     print("Playing:", file)
 
@@ -19,15 +22,23 @@ def play_video(file):
     # load video capture from file
     video = cv2.VideoCapture(file)
 
+    # get metadata
+    width  = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
     # window name and size
     cv2.namedWindow("video", cv2.WINDOW_AUTOSIZE)
 
     # See what we're getting into
     frameCount = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-
     print("Frames:", frameCount)
 
+    # Setup loop data
+    frameCounter = 0
+
     while video.isOpened():
+        frameNumber = video.get(cv2.CAP_PROP_POS_FRAMES)
+
         # Read video capture
         ret, frame = video.read()
 
@@ -35,33 +46,42 @@ def play_video(file):
         if not ret:
             break
 
-        # Display each frame
-        cv2.imshow("video", frame)
-        
-        # show one frame at a time
-        key = cv2.waitKey(0)
-        while key not in [ord('q'), ord('h'), ord('j'), ord('k'), ord('l')]:
+        # Only Process every n frames
+        if frameNumber % PROCESS_EVERY_N_FRAME == 0:
+            # Draw UI
+            cv2.putText(frame, "Frame " + str(int(frameNumber)) + " (" + str(int((frameNumber / frameCount) * 100)) + "%)", (0, height - 5), cv2.FONT_HERSHEY_SIMPLEX, height / 400, (255, 255, 255))
+
+            # Display each frame
+            cv2.imshow("video", frame)
+            
+            # show one frame at a time
             key = cv2.waitKey(0)
+            while key not in [ord('q'), ord('h'), ord('j'), ord(' '), ord('k'), ord('l')]:
+                key = cv2.waitKey(0)
 
-        # Quit when 'q' is pressed
-        if key == ord('q'):
-            break
+            # Quit when 'q' is pressed
+            if key == ord('q'):
+                break
 
-        # Good Frame
-        if key == ord('h'):
-            videoData = np.append(videoData, [0])
-        
-        # Bad Frame
-        if key == ord('j'):
-            videoData = np.append(videoData, [1])
+            # Good Frame
+            if key == ord('h'):
+                videoData = np.append(videoData, [0])
+            
+            # Bad Frame
+            if key == ord('j'):
+                videoData = np.append(videoData, [1])
 
-        # Auto-Dead Frame (for matching when we auto remove a frame)
-        if key == ord('k'):
-            videoData = np.append(videoData, [8])
+            # ? Frame
+            if key == ord(' '):
+                videoData = np.append(videoData, [2])
 
-        # Dead Frame
-        if key == ord('l'):
-            videoData = np.append(videoData, [9])
+            # Auto-Dead Frame (for matching when we auto remove a frame)
+            if key == ord('k'):
+                videoData = np.append(videoData, [8])
+
+            # Dead Frame
+            if key == ord('l'):
+                videoData = np.append(videoData, [9])
 
     # Release capture object
     video.release()
