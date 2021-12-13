@@ -29,12 +29,8 @@ def play_video(file):
     # window name and size
     cv2.namedWindow("video", cv2.WINDOW_AUTOSIZE)
 
-    # See what we're getting into
+    # Get number of frames
     frameCount = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    print("Frames:", frameCount)
-
-    # Setup loop data
-    frameCounter = 0
 
     while video.isOpened():
         frameNumber = video.get(cv2.CAP_PROP_POS_FRAMES)
@@ -56,31 +52,51 @@ def play_video(file):
             
             # show one frame at a time
             key = cv2.waitKey(0)
-            while key not in [ord('q'), ord('h'), ord('j'), ord(' '), ord('k'), ord('l')]:
+            while key not in [ord('q'), ord('a'), ord('s'), ord('d'), ord('f'), ord('g'), ord('h'), ord('j'), ord('k'), ord('l'), ord(':')]:
                 key = cv2.waitKey(0)
 
             # Quit when 'q' is pressed
             if key == ord('q'):
                 break
 
-            # Good Frame
-            if key == ord('h'):
+            # ? Frame
+            if key == ord('a'):
                 videoData = np.append(videoData, [0])
             
-            # Bad Frame
-            if key == ord('j'):
+            # ? Frame
+            if key == ord('s'):
                 videoData = np.append(videoData, [1])
 
             # ? Frame
-            if key == ord(' '):
+            if key == ord('d'):
                 videoData = np.append(videoData, [2])
 
-            # Auto-Dead Frame (for matching when we auto remove a frame)
+            # ? Frame
+            if key == ord('f'):
+                videoData = np.append(videoData, [3])
+
+            # ? Frame
+            if key == ord('g'):
+                videoData = np.append(videoData, [4])
+
+            # ? Frame
+            if key == ord('h'):
+                videoData = np.append(videoData, [5])
+
+            # ? Frame
+            if key == ord('j'):
+                videoData = np.append(videoData, [6])
+
+            # ? Frame
             if key == ord('k'):
+                videoData = np.append(videoData, [7])
+
+            # ? Frame
+            if key == ord('l'):
                 videoData = np.append(videoData, [8])
 
-            # Dead Frame
-            if key == ord('l'):
+            # ? Frame
+            if key == ord(':'):
                 videoData = np.append(videoData, [9])
 
     # Release capture object
